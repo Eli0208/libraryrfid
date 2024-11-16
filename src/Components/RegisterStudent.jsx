@@ -56,7 +56,7 @@ const RegisterStudent = () => {
 
       // Send POST request to backend
       const response = await axios.post(
-        `http://localhost:5000/api/students/register`, // Correct endpoint
+        `https://libraryrfid-backend.onrender.com/api/students/register`, // Correct endpoint
         formData, // Form data should be passed as the second argument
         {
           headers: {
