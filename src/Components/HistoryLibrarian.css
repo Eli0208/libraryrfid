@@ -1,0 +1,72 @@
+/* History Section Styling */
+.history {
+  padding: 20px;
+  background-color: #f3f4f6; /* Soft neutral background */
+  height: 85vh; /* Full viewport height */
+  font-family: Arial, sans-serif;
+  overflow: hidden; /* Ensure no overflow from the container */
+}
+
+.history-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2e5c2e; /* Dark green for title */
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.history-table-container {
+  max-height: calc(100vh - 80px); /* Adjust to account for title and padding */
+  overflow-y: auto; /* Make the table scrollable if it exceeds the height */
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for table */
+  height: auto;
+}
+
+.history-table th,
+.history-table td {
+  padding: 15px; /* Slightly larger padding for readability */
+  border: 1px solid #ddd; /* Border for table cells */
+  text-align: left;
+}
+
+.history-table th {
+  background-color: #2e5c2e; /* Dark green header */
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 1rem;
+}
+
+.history-table td {
+  background-color: #ffffff; /* White background for cells */
+  color: #333; /* Dark text for readability */
+  font-size: 0.95rem;
+}
+
+.history-table tr:nth-child(even) {
+  background-color: #eef7ee; /* Soft green for even rows */
+}
+
+.history-table tr:hover {
+  background-color: #d6ecd6; /* Lighter green on hover for table rows */
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.history .error {
+  color: #d9534f; /* Red for error messages */
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.history .loading {
+  text-align: center;
+  color: #666; /* Neutral color for loading state */
+  font-size: 1.2rem;
+  margin-top: 20px;
+}

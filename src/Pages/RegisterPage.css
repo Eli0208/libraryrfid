@@ -1,0 +1,74 @@
+/* Register page specific styles */
+.register-page__container {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+  
+  .register-page__heading {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #31561e;
+    font-weight: bold;
+  }
+  
+  .register-page__input-field {
+    margin-bottom: 20px;
+  }
+  
+  .register-page__input-field label {
+    display: block;
+    margin-bottom: 5px;
+    color: #31561e;
+  }
+  
+  .register-page__input-field input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    margin-top: 5px;
+    font-size: 16px;
+  }
+  
+  .register-page__button {
+    width: 100%;
+    background-color: #31561e;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .register-page__button:hover {
+    background-color: #45a049;
+  }
+  
+  .register-page__error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+  }
+  
+  .register-page__login-link {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .register-page__login-link-text {
+    color: #31561e;
+    text-decoration: none;
+  }
+  
+  .register-page__login-link-text:hover {
+    text-decoration: underline;
+  }
+  

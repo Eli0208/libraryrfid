@@ -1,0 +1,80 @@
+/* Register Student Form Styling */
+.register-student-section {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+  }
+  
+  .register-student-section h2 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .register-student-section form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .register-student-section .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .register-student-section .form-group label {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .register-student-section .form-group input,
+  .register-student-section .form-group select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+  }
+  
+  .register-student-section .form-group input:focus,
+  .register-student-section .form-group select:focus {
+    outline: none;
+    border-color: #4CAF50;
+  }
+  
+  .register-student-section .form-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .register-student-section .form-actions button {
+    padding: 12px 25px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .register-student-section .form-actions button:hover {
+    background-color: #45a049;
+  }
+  
+  .register-student-section .error {
+    color: red;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  /* Success message styling */
+  .register-student-section .success {
+    color: green;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
