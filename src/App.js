@@ -9,24 +9,27 @@ import { jwtDecode } from "jwt-decode"; // Import jwt-decode
 import LoginPage from "./Pages/LoginPage";
 import RegisterPage from "./Pages/RegisterPage";
 import LibrarianDashboard from "./Pages/LibrarianDashboard"; // Import the LibrarianDashboard
+import AdminPanel from "./Pages/AdminPanel"; // Import AdminPanel
 
 const App = () => {
   // Get the token from localStorage (or wherever it's stored)
   const token = localStorage.getItem("authToken");
 
-  // Function to check if the user role in the token is "user"
-  const isUser = () => {
+  // Function to decode the token and return the user's role
+  const getUserRole = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token); // Decode the token
-        return decoded.role === "user"; // Check if the role is "user"
+        return decoded.role; // Return the role
       } catch (error) {
         console.error("Failed to decode token:", error);
-        return false;
+        return null;
       }
     }
-    return false;
+    return null;
   };
+
+  const userRole = getUserRole();
 
   return (
     <Router>
@@ -35,14 +38,33 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
 
-        {/* Conditional route to LibrarianDashboard or LoginPage based on token */}
+        {/* Conditional route to LibrarianDashboard or AdminPanel based on role */}
         <Route
           path="/dashboard"
-          element={isUser() ? <LibrarianDashboard /> : <Navigate to="/login" />}
+          element={
+            userRole === "user" ? (
+              <LibrarianDashboard />
+            ) : userRole === "admin" ? (
+              <AdminPanel />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
         />
 
         {/* Default route */}
-        <Route path="/" element={<LoginPage />} />
+        <Route
+          path="/"
+          element={
+            userRole === "user" ? (
+              <LibrarianDashboard />
+            ) : userRole === "admin" ? (
+              <AdminPanel />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
     </Router>
   );

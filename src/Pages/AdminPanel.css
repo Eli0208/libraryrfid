@@ -1,126 +1,153 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
 
-/* General styles */
+/* General Reset Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    font-family: Montserrat;
-    background-color: #f0f2f5;
-    color: #333;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  margin: 0;
+  padding: 0;
 }
 
 .admin-panel {
-    display: flex;
-    height: 100vh;
+  display: flex;
+  height: 100vh;
 }
 
+/* Sidebar Navigation */
 .admin-nav {
-    background-color: #31561e;
-    color: white;
-    padding: 20px;
-    width: 250px;
-    height: 100vh;
-    position: fixed;
+  background-color: #31561e;
+  color: white;
+  padding: 20px;
+  width: 250px;
+  height: 100vh;
+  position: fixed; /* Ensure it stays at the left corner */
+  top: 0;
+  left: 0;
 }
 
 .admin-nav h2 {
-    text-align: center;
-    margin-bottom: 30px;
+  text-align: center;
+  margin-bottom: 30px;
 }
 
 .admin-nav ul {
-    list-style-type: none;
-    padding-left: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .admin-nav ul li {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .admin-nav ul li a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    display: block;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background 0.3s;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .admin-nav ul li a:hover {
-    background-color: #31561e;
+  background-color: #2b4a1a;
 }
 
+/* Content Area */
 .admin-content {
-    margin-left: 270px;
-    padding: 20px;
-    width: calc(100% - 270px);
+  margin-left: 250px; /* Matches the sidebar width */
+  padding: 20px;
+  width: calc(100% - 250px); /* Ensure content takes up the rest of the screen */
 }
 
 .admin-header {
-    background-color: #31561e;
-    color: white;
-    padding: 15px;
-    text-align: center;
+  background-color: #31561e;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  border-radius: 5px;
+  margin-bottom: 20px;
 }
 
+/* Dashboard and Section Titles */
 .admin-main h2 {
-    margin-bottom: 10px;
-    color: #31561e;
+  margin-bottom: 10px;
+  color: #31561e;
 }
 
 .card {
-    background-color: white;
-    border-radius: 5px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .card h3 {
-    color: #333;
+  color: #333;
 }
 
+/* Tables */
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-table, th, td {
-    border: 1px solid #ddd;
+table,
+th,
+td {
+  border: 1px solid #ddd;
 }
 
-th, td {
-    padding: 12px;
-    text-align: left;
+th,
+td {
+  padding: 12px;
+  text-align: left;
 }
 
 th {
-    background-color: #31561e;
-    color: white;
+  background-color: #31561e;
+  color: white;
 }
 
 button {
-    background-color: #31561e;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 5px;
+  background-color: #31561e;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
+/* Dropdown Select Styling */
 select {
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 768px) {
+  .admin-nav {
+    width: 200px;
+  }
+
+  .admin-content {
+    margin-left: 200px;
+    width: calc(100% - 200px);
+  }
 }

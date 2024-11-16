@@ -71,7 +71,7 @@ const LibrarianDashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
-    navigate("/");
+    navigate("/login");
   };
 
   const renderContent = () => {

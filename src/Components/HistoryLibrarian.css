@@ -15,6 +15,46 @@
   text-align: center;
 }
 
+.filter-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-section label {
+  font-size: 1rem;
+  color: #333;
+}
+
+.filter-section input {
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.filter-section input:focus {
+  outline: none;
+  border-color: #2e5c2e;
+}
+
+.filter-section button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: white;
+  background-color: #2e5c2e;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filter-section button:hover {
+  background-color: #245024;
+}
+
 .history-table-container {
   max-height: calc(100vh - 80px); /* Adjust to account for title and padding */
   overflow-y: auto; /* Make the table scrollable if it exceeds the height */
