@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import RegisterStudent from "../Components/RegisterStudent"; // Import RegisterStudent component
 import "./LibrarianDashboard.css";
 import HistoryLibrarian from "../Components/HistoryLibrarian";
+import LibrarianProfile from "../Components/LibrarianProfile";
 
 const LibrarianDashboard = () => {
   const [todaySignins, setTodaySignins] = useState(0);
@@ -68,7 +69,36 @@ const LibrarianDashboard = () => {
     fetchTodaySignins();
   }, []);
 
+  const logoutUser = async () => {
+    try {
+      const token = localStorage.getItem("authToken"); // Get the JWT token from localStorage
+
+      // Make the POST request to the /logout endpoint
+      const response = await axios.post(
+        "https://libraryrfid-backend.onrender.com/api/log/logout",
+        {}, // Empty body if the endpoint doesn't need any data
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+
+      // Handle success
+      console.log("Logout successful:", response.data);
+
+      // Optionally, clear token from localStorage after successful logout
+      localStorage.removeItem("authToken");
+    } catch (error) {
+      // Handle error
+      console.error(
+        "Error during logout:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  };
   const handleLogout = () => {
+    logoutUser();
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
     navigate("/login");
@@ -102,7 +132,7 @@ const LibrarianDashboard = () => {
       case "register":
         return <RegisterStudent />; // Directly call RegisterStudent component
       case "profile":
-        return <p>Profile content goes here.</p>;
+        return <LibrarianProfile />;
       default:
         return <p>Welcome to the main dashboard!</p>;
     }

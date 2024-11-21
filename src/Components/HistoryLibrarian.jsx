@@ -73,6 +73,8 @@ const HistoryLibrarian = () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF();
+
+    // Table Data
     const tableColumn = [
       "Student ID",
       "Student Name",
@@ -88,12 +90,45 @@ const HistoryLibrarian = () => {
       record.timestamp.toLocaleTimeString(),
     ]);
 
+    // Add Table to PDF
     doc.text("RFID Check-In History", 14, 20);
     doc.autoTable({
       head: [tableColumn],
       body: tableRows,
       startY: 30,
     });
+
+    // Calculate Table End Y Position
+    const finalY = doc.autoTable.previous.finalY + 10;
+
+    // Analytics Calculation
+    const uniqueInstitutes = new Set(
+      filteredData.map((record) => record.institute)
+    ).size;
+    const studentCount = filteredData.length;
+
+    const hourCounts = filteredData.reduce((acc, record) => {
+      const hour = record.timestamp.getHours();
+      acc[hour] = (acc[hour] || 0) + 1;
+      return acc;
+    }, {});
+
+    const peakHours = Object.entries(hourCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3) // Get top 3 peak hours
+      .map(([hour, count]) => `${hour}:00 - ${hour}:59 (${count} entries)`);
+
+    // Add Analytics Section
+    doc.text("Library Analytics", 14, finalY);
+    doc.text(`Total Institutes: ${uniqueInstitutes}`, 14, finalY + 10);
+    doc.text(`Total Students Timed In: ${studentCount}`, 14, finalY + 20);
+    doc.text("Peak Hours:", 14, finalY + 30);
+
+    peakHours.forEach((hour, index) => {
+      doc.text(`${index + 1}. ${hour}`, 20, finalY + 40 + index * 10);
+    });
+
+    // Save the PDF
     doc.save("RFID_CheckIn_History.pdf");
   };
 

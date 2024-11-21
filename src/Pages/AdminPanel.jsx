@@ -4,18 +4,56 @@ import "./AdminPanel.css";
 import HistoryLibrarian from "../Components/HistoryLibrarian";
 import ManageStudents from "../Components/ManageStudents";
 import ManageUsers from "../Components/ManageUsers";
+import LibrarianLogs from "../Components/LibrarianLogs";
+import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 // Dummy HistoryLibrarian Component
 
 const AdminPanel = () => {
-  const navigate = useNavigate(); // Initialize the navigation function
-  const [view, setView] = useState("dashboard"); // Manage current view state
+  const token = localStorage.getItem("authToken");
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.id;
+  const name = decodedToken.name;
+  const navigate = useNavigate();
+  const [view, setView] = useState("dashboard");
 
   const handleLogout = () => {
-    // Perform any logout logic here, like clearing tokens or session storage
-    localStorage.removeItem("authToken");
-    localStorage.removeItem("userData");
+    logoutUser();
     navigate("/login"); // Redirect to the login page
+  };
+  const logoutUser = async () => {
+    try {
+      if (!userId || !name) {
+        throw new Error("User ID and name are required for logout");
+      }
+
+      // Make the POST request to the /logout endpoint with userId and name
+      const response = await axios.post(
+        "https://libraryrfid-backend.onrender.com/api/auth/logout",
+        {
+          userId: userId,
+          name: name,
+        }, // Pass the JSON object with userId and name
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        }
+      );
+
+      // Handle success
+      console.log("Logout successful:", response.data);
+
+      // Clear token and user info from localStorage after successful logout
+      localStorage.removeItem("authToken");
+    } catch (error) {
+      // Handle error
+      console.error(
+        "Error during logout:",
+        error.response ? error.response.data : error.message
+      );
+    }
   };
 
   return (
@@ -37,6 +75,9 @@ const AdminPanel = () => {
             <a href="#attendance" onClick={() => setView("attendanceLogs")}>
               Attendance Logs
             </a>
+          </li>
+          <li>
+            <a onClick={() => setView("librarian")}>Librarian Logs</a>
           </li>
           <li>
             <a onClick={() => setView("manageusers")}>Manage Users</a>
@@ -62,6 +103,7 @@ const AdminPanel = () => {
 
           {view === "attendanceLogs" && <HistoryLibrarian />}
           {view === "manageusers" && <ManageUsers />}
+          {view === "librarian" && <LibrarianLogs />}
         </main>
       </div>
     </div>
