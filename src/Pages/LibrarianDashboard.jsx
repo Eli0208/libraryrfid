@@ -5,6 +5,7 @@ import RegisterStudent from "../Components/RegisterStudent"; // Import RegisterS
 import "./LibrarianDashboard.css";
 import HistoryLibrarian from "../Components/HistoryLibrarian";
 import LibrarianProfile from "../Components/LibrarianProfile";
+import { jwtDecode } from "jwt-decode";
 
 const LibrarianDashboard = () => {
   const [todaySignins, setTodaySignins] = useState(0);
@@ -12,6 +13,10 @@ const LibrarianDashboard = () => {
   const [error, setError] = useState(null);
   const [activeSection, setActiveSection] = useState("dashboard");
   const navigate = useNavigate();
+  const token = localStorage.getItem("authToken");
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.id;
+  const name = decodedToken.name;
 
   // Get current date and time
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
@@ -26,7 +31,6 @@ const LibrarianDashboard = () => {
 
   useEffect(() => {
     const fetchTodaySignins = async () => {
-      const token = localStorage.getItem("authToken");
       if (!token) {
         setError("Authentication token not found. Please log in.");
         setLoading(false);
@@ -71,12 +75,17 @@ const LibrarianDashboard = () => {
 
   const logoutUser = async () => {
     try {
-      const token = localStorage.getItem("authToken"); // Get the JWT token from localStorage
+      if (!userId || !name) {
+        throw new Error("User ID and name are required for logout");
+      }
 
-      // Make the POST request to the /logout endpoint
+      // Make the POST request to the /logout endpoint with userId and name
       const response = await axios.post(
-        "https://libraryrfid-backend.onrender.com/api/log/logout",
-        {}, // Empty body if the endpoint doesn't need any data
+        "https://libraryrfid-backend.onrender.com/api/auth/logout",
+        {
+          userId: userId,
+          name: name,
+        }, // Pass the JSON object with userId and name
         {
           headers: {
             Authorization: `Bearer ${token}`, // Include the token in the Authorization header
@@ -87,7 +96,7 @@ const LibrarianDashboard = () => {
       // Handle success
       console.log("Logout successful:", response.data);
 
-      // Optionally, clear token from localStorage after successful logout
+      // Clear token and user info from localStorage after successful logout
       localStorage.removeItem("authToken");
     } catch (error) {
       // Handle error

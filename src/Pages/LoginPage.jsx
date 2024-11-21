@@ -30,11 +30,9 @@ const LoginPage = () => {
 
       // Extract token and user data from response
       const { token, user } = response.data;
-      console.log(user);
 
       // Store token and user information in localStorage
       localStorage.setItem("authToken", token);
-      localStorage.setItem("userData", JSON.stringify(user));
 
       // Redirect to the dashboard using navigate
       navigate("/dashboard");
