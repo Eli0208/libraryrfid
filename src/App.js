@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -12,30 +12,40 @@ import LibrarianDashboard from "./Pages/LibrarianDashboard"; // Import the Libra
 import AdminPanel from "./Pages/AdminPanel"; // Import AdminPanel
 
 const App = () => {
-  // Get the token from localStorage (or wherever it's stored)
   const token = localStorage.getItem("authToken");
+  const [userRole, setUserRole] = useState(
+    localStorage.getItem("authToken")
+      ? jwtDecode(localStorage.getItem("authToken"))?.role
+      : ""
+  );
 
-  // Function to decode the token and return the user's role
+  useEffect(() => {
+    return () => {
+      getUserRole();
+    };
+  }, [token]);
+
   const getUserRole = () => {
     if (token) {
       try {
         const decoded = jwtDecode(token); // Decode the token
-        return decoded.role; // Return the role
+        setUserRole(decoded.role);
       } catch (error) {
         console.error("Failed to decode token:", error);
-        return null;
+        setUserRole("");
       }
     }
-    return null;
   };
 
-  const userRole = getUserRole();
-
+  console.log(userRole);
   return (
     <Router>
       <Routes>
         {/* Route to LoginPage and RegisterPage */}
-        <Route path="/login" element={<LoginPage />} />
+        <Route
+          path="/login"
+          element={<LoginPage setUserRole={setUserRole} />}
+        />
         <Route path="/register" element={<RegisterPage />} />
 
         {/* Conditional route to LibrarianDashboard or AdminPanel based on role */}
@@ -43,9 +53,9 @@ const App = () => {
           path="/dashboard"
           element={
             userRole === "user" ? (
-              <LibrarianDashboard />
+              <LibrarianDashboard setUserRole={setUserRole} />
             ) : userRole === "admin" ? (
-              <AdminPanel />
+              <AdminPanel setUserRole={setUserRole} />
             ) : (
               <Navigate to="/login" />
             )
@@ -57,9 +67,9 @@ const App = () => {
           path="/"
           element={
             userRole === "user" ? (
-              <LibrarianDashboard />
+              <LibrarianDashboard setUserRole={setUserRole} />
             ) : userRole === "admin" ? (
-              <AdminPanel />
+              <AdminPanel setUserRole={setUserRole} />
             ) : (
               <Navigate to="/login" />
             )

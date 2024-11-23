@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import "./LoginPage.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { jwtDecode } from "jwt-decode";
 
-const LoginPage = () => {
+const LoginPage = ({ setUserRole }) => {
+  localStorage.removeItem("authToken");
+  setUserRole("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -30,7 +33,7 @@ const LoginPage = () => {
 
       // Extract token and user data from response
       const { token, user } = response.data;
-
+      setUserRole(jwtDecode(token).role);
       // Store token and user information in localStorage
       localStorage.setItem("authToken", token);
 

@@ -7,7 +7,7 @@ import HistoryLibrarian from "../Components/HistoryLibrarian";
 import LibrarianProfile from "../Components/LibrarianProfile";
 import { jwtDecode } from "jwt-decode";
 
-const LibrarianDashboard = () => {
+const LibrarianDashboard = ({ setUserRole }) => {
   const [todaySignins, setTodaySignins] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,6 +74,7 @@ const LibrarianDashboard = () => {
   }, []);
 
   const logoutUser = async () => {
+    setUserRole("");
     try {
       if (!userId || !name) {
         throw new Error("User ID and name are required for logout");
@@ -107,9 +108,11 @@ const LibrarianDashboard = () => {
     }
   };
   const handleLogout = () => {
+    setUserRole("");
     logoutUser();
     localStorage.removeItem("authToken");
     localStorage.removeItem("userData");
+
     navigate("/login");
   };
 

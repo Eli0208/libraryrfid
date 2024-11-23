@@ -10,7 +10,7 @@ import { jwtDecode } from "jwt-decode";
 
 // Dummy HistoryLibrarian Component
 
-const AdminPanel = () => {
+const AdminPanel = ({ setUserRole }) => {
   const token = localStorage.getItem("authToken");
   const decodedToken = jwtDecode(token);
   const userId = decodedToken.id;
@@ -19,10 +19,13 @@ const AdminPanel = () => {
   const [view, setView] = useState("dashboard");
 
   const handleLogout = () => {
+    localStorage.removeItem("authToken");
     logoutUser();
+    setUserRole("");
     navigate("/login"); // Redirect to the login page
   };
   const logoutUser = async () => {
+    setUserRole("");
     try {
       if (!userId || !name) {
         throw new Error("User ID and name are required for logout");
