@@ -15,19 +15,11 @@ const LibrarianDashboard = ({ setUserRole }) => {
   const navigate = useNavigate();
   const token = localStorage.getItem("authToken");
   const decodedToken = jwtDecode(token);
-  const userId = decodedToken.id;
+  const userId = decodedToken.userId;
   const name = decodedToken.name;
 
   // Get current date and time
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentDateTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(intervalId);
-  }, []);
 
   useEffect(() => {
     const fetchTodaySignins = async () => {
@@ -39,7 +31,7 @@ const LibrarianDashboard = ({ setUserRole }) => {
 
       try {
         const response = await axios.get(
-          "https://libraryrfid-backend.onrender.com/api/students/records/all-time-in",
+          "http://localhost:5000/api/students/time-ins",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,27 +43,28 @@ const LibrarianDashboard = ({ setUserRole }) => {
         const startOfDay = new Date(today.setHours(0, 0, 0, 0));
         const endOfDay = new Date(today.setHours(23, 59, 59, 999));
 
-        let studentsSignedInToday = new Set();
+        const timeIns = response.data.timeIns;
 
-        response.data.records.forEach((student) => {
-          student.rfidScans.forEach((scan) => {
-            const scanDate = new Date(scan.timestamp);
-            if (scanDate >= startOfDay && scanDate <= endOfDay) {
-              studentsSignedInToday.add(student._id);
-            }
-          });
+        // Filter time-ins for today and count unique student numbers
+        const studentsSignedInToday = new Set();
+        timeIns.forEach((timeIn) => {
+          const timeInDate = new Date(timeIn.date);
+          if (timeInDate >= startOfDay && timeInDate <= endOfDay) {
+            studentsSignedInToday.add(timeIn.studentNumber);
+          }
         });
 
         setTodaySignins(studentsSignedInToday.size);
         setLoading(false);
       } catch (err) {
+        console.error(err);
         setError(err.response?.data?.message || "Failed to fetch data.");
         setLoading(false);
       }
     };
 
     fetchTodaySignins();
-  }, []);
+  }, [token]);
 
   const logoutUser = async () => {
     setUserRole("");
@@ -82,7 +75,7 @@ const LibrarianDashboard = ({ setUserRole }) => {
 
       // Make the POST request to the /logout endpoint with userId and name
       const response = await axios.post(
-        "https://libraryrfid-backend.onrender.com/api/auth/logout",
+        "http://localhost:5000/api/auth/logout",
         {
           userId: userId,
           name: name,

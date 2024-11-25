@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios"; // Import axios to make HTTP requests
 import "./RegisterStudent.css"; // Import the CSS file for styling
+import { jwtDecode } from "jwt-decode";
 
 const RegisterStudent = () => {
   // State to hold form data
+  const token = localStorage.getItem("authToken");
+  const decodedtoken = jwtDecode(token);
+  console.log(decodedtoken);
   const [formData, setFormData] = useState({
     name: "", // full name of the student
     studentNumber: "", // student number
     institute: "", // student institute
     rfidTag: "", // RFID tag
+    idNo: decodedtoken.userId,
     status: "Active", // default status as "Active"
   });
 
@@ -56,7 +61,7 @@ const RegisterStudent = () => {
 
       // Send POST request to backend
       const response = await axios.post(
-        `https://libraryrfid-backend.onrender.com/api/students/register`, // Correct endpoint
+        `http://localhost:5000/api/students/register`, // Correct endpoint
         formData, // Form data should be passed as the second argument
         {
           headers: {
@@ -73,6 +78,7 @@ const RegisterStudent = () => {
           studentNumber: "",
           institute: "",
           rfidTag: "",
+          idNo: decodedtoken.userId,
           status: "Active",
         });
       } else {

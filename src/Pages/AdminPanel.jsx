@@ -13,7 +13,8 @@ import { jwtDecode } from "jwt-decode";
 const AdminPanel = ({ setUserRole }) => {
   const token = localStorage.getItem("authToken");
   const decodedToken = jwtDecode(token);
-  const userId = decodedToken.id;
+  const userId = decodedToken.userId;
+  console.log(decodedToken);
   const name = decodedToken.name;
   const navigate = useNavigate();
   const [view, setView] = useState("dashboard");
@@ -33,7 +34,7 @@ const AdminPanel = ({ setUserRole }) => {
 
       // Make the POST request to the /logout endpoint with userId and name
       const response = await axios.post(
-        "https://libraryrfid-backend.onrender.com/api/auth/logout",
+        "http://localhost:5000/api/auth/logout",
         {
           userId: userId,
           name: name,

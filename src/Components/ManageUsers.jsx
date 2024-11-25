@@ -16,7 +16,7 @@ const ManageUsers = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "https://libraryrfid-backend.onrender.com/api/auth/users",
+          "http://localhost:5000/api/auth/users",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -36,15 +36,12 @@ const ManageUsers = () => {
 
   const handleDelete = async (userId) => {
     try {
-      await axios.delete(
-        `https://libraryrfid-backend.onrender.com/api/auth/users/${userId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setUsers(users.filter((user) => user._id !== userId));
+      await axios.delete(`http://localhost:5000/api/auth/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUsers(users.filter((user) => user.idNo !== userId));
     } catch (err) {
       setError("Failed to delete user");
     }
@@ -59,7 +56,7 @@ const ManageUsers = () => {
   const handleSave = async () => {
     try {
       await axios.put(
-        `https://libraryrfid-backend.onrender.com/api/auth/users/${currentUser._id}`,
+        `http://localhost:5000/api/auth/users/${currentUser.idNo}`,
         editData,
         {
           headers: {
@@ -70,7 +67,7 @@ const ManageUsers = () => {
       // Update the user in the state
       setUsers(
         users.map((user) =>
-          user._id === currentUser._id ? { ...user, ...editData } : user
+          user.idNo === currentUser.idNo ? { ...user, ...editData } : user
         )
       );
       setEditModal(false); // Close modal
@@ -97,15 +94,16 @@ const ManageUsers = () => {
             </tr>
           </thead>
           <tbody>
+            {console.log(users)}
             {users.map((user) => (
-              <tr key={user._id}>
+              <tr key={user.idNo}>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.role}</td>
                 <td>
                   <button
                     className="delete-button"
-                    onClick={() => handleDelete(user._id)}
+                    onClick={() => handleDelete(user.idNo)}
                   >
                     Delete
                   </button>

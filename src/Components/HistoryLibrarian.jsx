@@ -24,23 +24,30 @@ const HistoryLibrarian = () => {
 
       try {
         const response = await axios.get(
-          "https://libraryrfid-backend.onrender.com/api/students/records/all-time-in",
+          "http://localhost:5000/api/students/time-ins",
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            headers: { Authorization: `Bearer ${token}` },
           }
         );
 
-        const sortedRecords = response.data.records
-          .flatMap((record) =>
-            record.rfidScans.map((scan) => ({
-              studentName: record.name,
+        const sortedRecords = response.data.timeIns
+          .map((record) => {
+            // Adjust the date from UTC to Philippine Standard Time (PST)
+            const utcDate = new Date(record.date); // Get UTC date from the API
+            const pstDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours for PST
+
+            const timestamp = new Date(
+              `${pstDate.toISOString().split("T")[0]}T${record.time}`
+            );
+
+            return {
+              id: record.id,
               studentNumber: record.studentNumber,
+              studentName: record.name,
               institute: record.institute,
-              timestamp: new Date(scan.timestamp),
-            }))
-          )
+              timestamp, // Use adjusted timestamp
+            };
+          })
           .sort((a, b) => b.timestamp - a.timestamp); // Sort by latest first
 
         setHistoryData(sortedRecords);
@@ -57,24 +64,33 @@ const HistoryLibrarian = () => {
 
   const handleFilter = () => {
     if (!startDate || !endDate) {
-      setFilteredData(historyData); // Reset filter if no dates are selected
+      setFilteredData(historyData); // Reset filter if no dates selected
       return;
     }
 
     const start = new Date(startDate);
     const end = new Date(endDate);
 
+    if (start > end) {
+      setError("Start date must be earlier than or equal to the end date.");
+      return;
+    }
+
     const filtered = historyData.filter(
       (record) => record.timestamp >= start && record.timestamp <= end
     );
 
     setFilteredData(filtered);
+    setError(null); // Clear previous error
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF();
+    if (filteredData.length === 0) {
+      alert("No data available to export.");
+      return;
+    }
 
-    // Table Data
+    const doc = new jsPDF();
     const tableColumn = [
       "Student ID",
       "Student Name",
@@ -90,7 +106,6 @@ const HistoryLibrarian = () => {
       record.timestamp.toLocaleTimeString(),
     ]);
 
-    // Add Table to PDF
     doc.text("RFID Check-In History", 14, 20);
     doc.autoTable({
       head: [tableColumn],
@@ -98,10 +113,7 @@ const HistoryLibrarian = () => {
       startY: 30,
     });
 
-    // Calculate Table End Y Position
     const finalY = doc.autoTable.previous.finalY + 10;
-
-    // Analytics Calculation
     const uniqueInstitutes = new Set(
       filteredData.map((record) => record.institute)
     ).size;
@@ -115,20 +127,17 @@ const HistoryLibrarian = () => {
 
     const peakHours = Object.entries(hourCounts)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 3) // Get top 3 peak hours
+      .slice(0, 3)
       .map(([hour, count]) => `${hour}:00 - ${hour}:59 (${count} entries)`);
 
-    // Add Analytics Section
     doc.text("Library Analytics", 14, finalY);
     doc.text(`Total Institutes: ${uniqueInstitutes}`, 14, finalY + 10);
     doc.text(`Total Students Timed In: ${studentCount}`, 14, finalY + 20);
     doc.text("Peak Hours:", 14, finalY + 30);
-
     peakHours.forEach((hour, index) => {
       doc.text(`${index + 1}. ${hour}`, 20, finalY + 40 + index * 10);
     });
 
-    // Save the PDF
     doc.save("RFID_CheckIn_History.pdf");
   };
 
@@ -144,7 +153,6 @@ const HistoryLibrarian = () => {
     <div className="history">
       <h2 className="history-title">RFID Check-In History</h2>
 
-      {/* Filter Section */}
       <div className="filter-section">
         <label>
           Start Date:
@@ -162,8 +170,12 @@ const HistoryLibrarian = () => {
             onChange={(e) => setEndDate(e.target.value)}
           />
         </label>
-        <button onClick={handleFilter}>Filter</button>
-        <button onClick={exportToPDF}>Export to PDF</button>
+        <button onClick={handleFilter} disabled={loading}>
+          Filter
+        </button>
+        <button onClick={exportToPDF} disabled={filteredData.length === 0}>
+          Export to PDF
+        </button>
       </div>
 
       <div className="history-table-container">

@@ -29,7 +29,7 @@ const RegisterPage = () => {
 
     try {
       const response = await axios.post(
-        "https://libraryrfid-backend.onrender.com/api/auth/register",
+        "http://localhost:5000/api/auth/register",
         {
           name,
           email,

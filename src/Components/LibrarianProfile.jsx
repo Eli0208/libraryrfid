@@ -1,19 +1,55 @@
 import React, { useState } from "react";
 import "./LibrarianProfile.css";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Corrected import
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function LibrarianProfile() {
   const [showModal, setShowModal] = useState(false);
   const token = localStorage.getItem("authToken");
   const navigate = useNavigate();
 
-  // Decode the token
-  const { name, email } = jwtDecode(token);
-
-  const handleChangeUser = () => {
-    localStorage.removeItem("authToken");
+  if (!token) {
+    console.error("Authentication token not found.");
     navigate("/login");
+    return null;
+  }
+
+  // Decode the token
+  let name, email, userId;
+  try {
+    const decodedToken = jwtDecode(token);
+    name = decodedToken.name;
+    email = decodedToken.email;
+    userId = decodedToken.userId; // Adjust based on the token structure
+  } catch (error) {
+    console.error("Failed to decode token:", error);
+    navigate("/login");
+    return null;
+  }
+
+  const handleChangeUser = async () => {
+    try {
+      await axios.post(
+        "http://localhost:5000/api/auth/logout",
+        {
+          userId: userId,
+          name: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      localStorage.removeItem("authToken");
+      navigate("/login");
+    } catch (error) {
+      console.error(
+        "Failed to log out:",
+        error.response?.data || error.message
+      );
+    }
   };
 
   return (

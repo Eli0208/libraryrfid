@@ -8,9 +8,8 @@ function LibrarianLogs() {
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        // Make the POST request to the API endpoint with the token in the Authorization header
         const response = await axios.post(
-          "https://libraryrfid-backend.onrender.com/api/log/all-logs",
+          "http://localhost:5000/api/auth/all-logs",
           {}, // Empty body or any required body data if needed
           {
             headers: {
@@ -18,7 +17,6 @@ function LibrarianLogs() {
             },
           }
         );
-
         setLogs(response.data.logs); // Store the logs in state
       } catch (error) {
         console.error(
@@ -47,12 +45,14 @@ function LibrarianLogs() {
         <tbody>
           {logs.length > 0 ? (
             logs.map((log, index) => (
-              <tr key={log._id}>
+              <tr key={log.id}>
                 <td>{index + 1}</td>
-                <td>{log.userId}</td>
+                <td>{log.idNo}</td>
                 <td>{log.name}</td>
                 <td>{log.action}</td>
-                <td>{new Date(log.timestamp).toLocaleString()}</td>
+                <td>
+                  {new Date(log.date).toLocaleDateString()} {log.time}
+                </td>
               </tr>
             ))
           ) : (
