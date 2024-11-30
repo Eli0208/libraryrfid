@@ -7,6 +7,7 @@ import ManageUsers from "../Components/ManageUsers";
 import LibrarianLogs from "../Components/LibrarianLogs";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import AdminDashboard from "../Components/AdminDashboard";
 
 // Dummy HistoryLibrarian Component
 
@@ -101,7 +102,7 @@ const AdminPanel = ({ setUserRole }) => {
 
         <main className="admin-main">
           {/* Conditional Rendering Based on the View */}
-          {view === "dashboard" && <section id="dashboard"></section>}
+          {view === "dashboard" && <AdminDashboard />}
 
           {view === "students" && <ManageStudents />}
 
