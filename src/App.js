@@ -5,24 +5,20 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
-import { jwtDecode } from "jwt-decode"; // Import jwt-decode
+import { jwtDecode } from "jwt-decode"; // Corrected import of jwt-decode
 import LoginPage from "./Pages/LoginPage";
 import RegisterPage from "./Pages/RegisterPage";
 import LibrarianDashboard from "./Pages/LibrarianDashboard"; // Import the LibrarianDashboard
 import AdminPanel from "./Pages/AdminPanel"; // Import AdminPanel
+import ForgotPasswordPage from "./Pages/ForgotPasswordPage"; // Import ForgotPasswordPage
+import ResetPasswordPage from "./Pages/ResetPasswordPage";
 
 const App = () => {
   const token = localStorage.getItem("authToken");
-  const [userRole, setUserRole] = useState(
-    localStorage.getItem("authToken")
-      ? jwtDecode(localStorage.getItem("authToken"))?.role
-      : ""
-  );
+  const [userRole, setUserRole] = useState(token ? jwtDecode(token)?.role : "");
 
   useEffect(() => {
-    return () => {
-      getUserRole();
-    };
+    getUserRole();
   }, [token]);
 
   const getUserRole = () => {
@@ -37,7 +33,6 @@ const App = () => {
     }
   };
 
-  console.log(userRole);
   return (
     <Router>
       <Routes>
@@ -48,6 +43,9 @@ const App = () => {
         />
         <Route path="/register" element={<RegisterPage />} />
 
+        {/* Route to ForgotPasswordPage */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         {/* Conditional route to LibrarianDashboard or AdminPanel based on role */}
         <Route
           path="/dashboard"
