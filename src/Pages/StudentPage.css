@@ -1,0 +1,134 @@
+/* General Styling */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Full screen height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4; /* Light gray background for contrast */
+    overflow: hidden; /* Prevent scrollbars */
+  }
+  
+  h1, h2, h3, p {
+    margin: 0;
+    padding: 0;
+    color: #333;
+    font-size: 2rem; /* 200% bigger */
+  }
+  
+  button {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1.6rem; /* 200% bigger */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  button:hover {
+    background-color: #2a7b03;
+  }
+  
+  /* Card Styling */
+  .student-page-container {
+    width: 120%; /* Wider width (80% of the screen width) */
+    max-width: 900px; /* Optional: Maximum width to keep the content from being too stretched on large screens */
+    height: 100%; /* Full height */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center content vertically */
+    align-items: center; /* Center content horizontally */
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease-in-out; /* Subtle fade-in effect */
+  }
+  
+  /* Title */
+  .page-title {
+    font-size: 4.8rem; /* 200% bigger */
+    color: #31561e;
+    margin-bottom: 10px;
+  }
+  
+  /* Current Date and Time */
+  .current-date-time {
+    font-size: 3.6rem; /* 200% bigger */
+    color: #333;
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  
+  /* Content */
+  .time-in-details {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #e8f5e9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 100%; /* Ensure it takes the full width */
+    max-width: 800px; /* Optional: Max width for better layout control */
+  }
+  
+  .time-in-details .time-in-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 2.1rem; /* 200% bigger */
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  .time-in-row span {
+    color: #4CAF50; /* Highlight the values in green */
+  }
+  
+  .time-in-row:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Center alignment */
+  .no-data-message {
+    font-size: 2.4rem; /* 200% bigger */
+    color: #333;
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+/* Login Button Styling */
+.login-button {
+    font-size: 1rem; /* 200% bigger */
+    padding: 15px 30px;
+    border: none;
+    border-radius: 8px;
+    background-color: #31561e; /* Green background */
+    color: white;
+    position: absolute; /* Position the button absolutely */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    z-index: 1000; /* Ensure it is above other content */
+  }
+  
+  .login-button:hover {
+    background-color: #4CAF50; /* Lighter green on hover */
+  }
+  

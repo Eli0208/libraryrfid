@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { Chart, registerables } from "chart.js";
+import ExcelJS from "exceljs"; // Import exceljs
 import "./HistoryLibrarian.css";
+
+Chart.register(...registerables);
 
 const HistoryLibrarian = () => {
   const [historyData, setHistoryData] = useState([]);
@@ -32,10 +35,8 @@ const HistoryLibrarian = () => {
 
         const sortedRecords = response.data.timeIns
           .map((record) => {
-            // Adjust the date from UTC to Philippine Standard Time (PST)
-            const utcDate = new Date(record.date); // Get UTC date from the API
-            const pstDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000); // Add 8 hours for PST
-
+            const utcDate = new Date(record.date);
+            const pstDate = new Date(utcDate.getTime() + 8 * 60 * 60 * 1000); // Adjust to PST
             const timestamp = new Date(
               `${pstDate.toISOString().split("T")[0]}T${record.time}`
             );
@@ -45,7 +46,7 @@ const HistoryLibrarian = () => {
               studentNumber: record.studentNumber,
               studentName: record.name,
               institute: record.institute,
-              timestamp, // Use adjusted timestamp
+              timestamp,
             };
           })
           .sort((a, b) => b.timestamp - a.timestamp); // Sort by latest first
@@ -64,7 +65,7 @@ const HistoryLibrarian = () => {
 
   const handleFilter = () => {
     if (!startDate || !endDate) {
-      setFilteredData(historyData); // Reset filter if no dates selected
+      setFilteredData(historyData);
       return;
     }
 
@@ -81,64 +82,172 @@ const HistoryLibrarian = () => {
     );
 
     setFilteredData(filtered);
-    setError(null); // Clear previous error
+    setError(null);
   };
 
-  const exportToPDF = () => {
+  const exportToExcel = async () => {
     if (filteredData.length === 0) {
       alert("No data available to export.");
       return;
     }
 
-    const doc = new jsPDF();
-    const tableColumn = [
-      "Student ID",
-      "Student Name",
-      "Institute",
-      "Date",
-      "Time",
-    ];
-    const tableRows = filteredData.map((record) => [
-      record.studentNumber,
-      record.studentName,
-      record.institute,
-      record.timestamp.toLocaleDateString(),
-      record.timestamp.toLocaleTimeString(),
-    ]);
+    // Data calculations
+    const studentPerInstitute = {};
+    const peakHours = Array(24).fill(0);
+    const uniqueStudents = new Set();
+    const uniqueInstitutes = new Set();
 
-    doc.text("RFID Check-In History", 14, 20);
-    doc.autoTable({
-      head: [tableColumn],
-      body: tableRows,
-      startY: 30,
-    });
+    filteredData.forEach((record) => {
+      studentPerInstitute[record.institute] =
+        (studentPerInstitute[record.institute] || 0) + 1;
 
-    const finalY = doc.autoTable.previous.finalY + 10;
-    const uniqueInstitutes = new Set(
-      filteredData.map((record) => record.institute)
-    ).size;
-    const studentCount = filteredData.length;
+      uniqueStudents.add(record.studentNumber);
+      uniqueInstitutes.add(record.institute);
 
-    const hourCounts = filteredData.reduce((acc, record) => {
       const hour = record.timestamp.getHours();
-      acc[hour] = (acc[hour] || 0) + 1;
-      return acc;
-    }, {});
-
-    const peakHours = Object.entries(hourCounts)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 3)
-      .map(([hour, count]) => `${hour}:00 - ${hour}:59 (${count} entries)`);
-
-    doc.text("Library Analytics", 14, finalY);
-    doc.text(`Total Institutes: ${uniqueInstitutes}`, 14, finalY + 10);
-    doc.text(`Total Students Timed In: ${studentCount}`, 14, finalY + 20);
-    doc.text("Peak Hours:", 14, finalY + 30);
-    peakHours.forEach((hour, index) => {
-      doc.text(`${index + 1}. ${hour}`, 20, finalY + 40 + index * 10);
+      peakHours[hour]++;
     });
 
-    doc.save("RFID_CheckIn_History.pdf");
+    const totalStudents = uniqueStudents.size;
+    const totalInstitutes = uniqueInstitutes.size;
+    const totalPeakHours = peakHours.reduce((a, b) => a + b, 0);
+
+    // Generate Chart Images with Chart.js
+    const chartCanvas1 = document.createElement("canvas");
+    chartCanvas1.width = 2400; // 300% wider
+    chartCanvas1.height = 400;
+
+    const chartData1 = {
+      labels: Object.keys(studentPerInstitute),
+      datasets: [
+        {
+          label: "Students per Institute",
+          data: Object.values(studentPerInstitute),
+          backgroundColor: "rgba(153, 102, 255, 0.2)",
+          borderColor: "rgba(153, 102, 255, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    const chart1 = new Chart(chartCanvas1, {
+      type: "bar",
+      data: chartData1,
+      options: {
+        responsive: false,
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+
+    // Chart 2: Peak Hours
+    const chartCanvas2 = document.createElement("canvas");
+    chartCanvas2.width = 2400; // 300% wider
+    chartCanvas2.height = 400;
+
+    const chartData2 = {
+      labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+      datasets: [
+        {
+          label: "Check-ins per Hour",
+          data: peakHours,
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    const chart2 = new Chart(chartCanvas2, {
+      type: "line",
+      data: chartData2,
+      options: {
+        responsive: false,
+        scales: {
+          y: { beginAtZero: true },
+        },
+      },
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    const chartImage1 = chartCanvas1.toDataURL("image/png");
+    const chartImage2 = chartCanvas2.toDataURL("image/png");
+
+    // Prepare data for Excel (Data Summary)
+    const dataSummary = [
+      ["Total Students Timed In", totalStudents],
+      ["Total Institutes Timed In", totalInstitutes],
+      ["Total Peak Hours", totalPeakHours],
+    ];
+
+    const institutesTimedIn = Object.keys(studentPerInstitute);
+    const studentsPerInstitute = Object.entries(studentPerInstitute).map(
+      ([institute, count]) => [`${institute}: ${count} students`]
+    );
+
+    // Create Excel file using exceljs
+    const workbook = new ExcelJS.Workbook();
+    const sheet1 = workbook.addWorksheet("Data");
+
+    // Add table headers
+    sheet1.addRow(["Student ID", "Student Name", "Institute", "Date", "Time"]);
+
+    filteredData.forEach((record) => {
+      sheet1.addRow([
+        record.studentNumber,
+        record.studentName,
+        record.institute,
+        record.timestamp.toLocaleDateString(),
+        record.timestamp.toLocaleTimeString(),
+      ]);
+    });
+
+    // Add chart images to the second sheet
+    const sheet2 = workbook.addWorksheet("Charts");
+
+    // Add data summary above the images in Sheet 2
+    sheet2.addRow(["Data Summary"]);
+    dataSummary.forEach(([label, value]) => {
+      sheet2.addRow([label, value]);
+    });
+
+    // Add "Institutes Timed In" below the data summary
+    sheet2.addRow([]);
+    sheet2.addRow(["Institutes Timed In"]);
+    institutesTimedIn.forEach((institute) => {
+      sheet2.addRow([institute]);
+    });
+
+    // Add some spacing
+    sheet2.addRow([]);
+
+    // Insert Chart 1 above the first chart image
+    const image1 = await workbook.addImage({
+      base64: chartImage1,
+      extension: "png",
+    });
+    sheet2.addImage(image1, "A10:G20");
+
+    // Insert Chart 2 above the second chart image
+    const image2 = await workbook.addImage({
+      base64: chartImage2,
+      extension: "png",
+    });
+    sheet2.addImage(image2, "A22:G32");
+
+    // Write to file
+    workbook.xlsx.writeBuffer().then((buffer) => {
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "RFID_CheckIn_History_with_Charts.xlsx";
+      link.click();
+    });
   };
 
   if (loading) {
@@ -173,8 +282,8 @@ const HistoryLibrarian = () => {
         <button onClick={handleFilter} disabled={loading}>
           Filter
         </button>
-        <button onClick={exportToPDF} disabled={filteredData.length === 0}>
-          Export to PDF
+        <button onClick={exportToExcel} disabled={filteredData.length === 0}>
+          Export to Excel
         </button>
       </div>
 
@@ -190,8 +299,8 @@ const HistoryLibrarian = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredData.map((record, index) => (
-              <tr key={index}>
+            {filteredData.map((record) => (
+              <tr key={record.id}>
                 <td>{record.studentNumber}</td>
                 <td>{record.studentName}</td>
                 <td>{record.institute}</td>

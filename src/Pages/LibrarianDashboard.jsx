@@ -6,6 +6,7 @@ import "./LibrarianDashboard.css";
 import HistoryLibrarian from "../Components/HistoryLibrarian";
 import LibrarianProfile from "../Components/LibrarianProfile";
 import { jwtDecode } from "jwt-decode";
+import TimeInsStudent from "../Components/TimeInsStudent";
 
 const LibrarianDashboard = ({ setUserRole }) => {
   const [todaySignins, setTodaySignins] = useState(0);
@@ -124,10 +125,13 @@ const LibrarianDashboard = ({ setUserRole }) => {
                   <p className="error">{error}</p>
                 </div>
               ) : (
-                <div className="signins-info">
-                  <h2>Today's Sign-ins</h2>
-                  <p className="signins-count">{todaySignins}</p>
-                </div>
+                <>
+                  <div className="signins-info">
+                    <h2>Today's Sign-ins</h2>
+                    <p className="signins-count">{todaySignins}</p>
+                  </div>
+                  <TimeInsStudent />
+                </>
               )}
             </div>
           </section>

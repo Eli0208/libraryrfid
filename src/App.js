@@ -12,6 +12,7 @@ import LibrarianDashboard from "./Pages/LibrarianDashboard"; // Import the Libra
 import AdminPanel from "./Pages/AdminPanel"; // Import AdminPanel
 import ForgotPasswordPage from "./Pages/ForgotPasswordPage"; // Import ForgotPasswordPage
 import ResetPasswordPage from "./Pages/ResetPasswordPage";
+import StudentPage from "./Pages/StudentPage";
 
 const App = () => {
   const token = localStorage.getItem("authToken");
@@ -69,7 +70,7 @@ const App = () => {
             ) : userRole === "admin" ? (
               <AdminPanel setUserRole={setUserRole} />
             ) : (
-              <Navigate to="/login" />
+              <StudentPage />
             )
           }
         />
