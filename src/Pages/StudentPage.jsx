@@ -7,8 +7,9 @@ const StudentPage = () => {
   const [latestTimeIn, setLatestTimeIn] = useState(null);
   const [error, setError] = useState(null);
   const [currentDateTime, setCurrentDateTime] = useState("");
+  const [currentDayEntries, setCurrentDayEntries] = useState(0); // State to hold count of today's entries
   const navigate = useNavigate();
-  // Function to update the current date and time
+
   useEffect(() => {
     const fetchLatestTimeIn = async () => {
       try {
@@ -18,6 +19,7 @@ const StudentPage = () => {
         const timeIns = response.data.timeIns;
 
         if (timeIns.length > 0) {
+          // Find the latest time-in entry
           const latest = timeIns.reduce((latest, current) => {
             const latestDateTime = new Date(`${latest.date}T${latest.time}`);
             const currentDateTime = new Date(`${current.date}T${current.time}`);
@@ -25,6 +27,18 @@ const StudentPage = () => {
           });
 
           setLatestTimeIn(latest);
+
+          // Get today's date
+          const today = new Date().toISOString().split("T")[0];
+
+          // Filter entries for the current day
+          const todayEntries = timeIns.filter(
+            (entry) => entry.date.split("T")[0] === today
+          );
+          console.log(latestTimeIn.date, today);
+
+          // Update the count of today's entries
+          setCurrentDayEntries(todayEntries.length);
         }
       } catch (err) {
         console.error("Error fetching time-ins:", err);
@@ -60,8 +74,8 @@ const StudentPage = () => {
             <span className="time-in-value">{latestTimeIn.name}</span>
           </div>
           <div className="time-in-row">
-            <span className="time-in-label">Student Number:</span>
-            <span className="time-in-value">{latestTimeIn.studentNumber}</span>
+            <span className="time-in-label">RFID Number:</span>
+            <span className="time-in-value">{latestTimeIn.rfidTag}</span>
           </div>
           <div className="time-in-row">
             <span className="time-in-label">Institute:</span>
@@ -81,6 +95,10 @@ const StudentPage = () => {
       ) : (
         <p className="no-data-message">No time-in data available.</p>
       )}
+      {/* Display the number of time-in entries for the current day */}
+      <div className="time-in-summary">
+        <p>Number of entries today: {currentDayEntries}</p>
+      </div>
       <button className="login-button" onClick={handleLogin}>
         Login
       </button>

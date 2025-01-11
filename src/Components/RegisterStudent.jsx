@@ -1,57 +1,46 @@
 import React, { useState } from "react";
-import axios from "axios"; // Import axios to make HTTP requests
-import "./RegisterStudent.css"; // Import the CSS file for styling
+import axios from "axios";
+import "./RegisterStudent.css";
 import { jwtDecode } from "jwt-decode";
 
 const RegisterStudent = () => {
-  // State to hold form data
   const token = localStorage.getItem("authToken");
   const decodedtoken = jwtDecode(token);
   console.log(decodedtoken);
+
   const [formData, setFormData] = useState({
-    name: "", // full name of the student
-    studentNumber: "", // student number
-    institute: "", // student institute
-    rfidTag: "", // RFID tag
+    name: "",
+    studentNumber: "",
+    institute: "Institute 1", // Default selection for the dropdown
+    rfidTag: "",
     idNo: decodedtoken.userId,
-    status: "Active", // default status as "Active"
+    status: "Active",
   });
 
-  // State for error messages
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // State to handle loading during submission
-  const [success, setSuccess] = useState(""); // State to show success message after submission
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(""); // Clear previous errors
-    setSuccess(""); // Clear success message
+    setError("");
+    setSuccess("");
 
-    // Simple validation
-    if (
-      !formData.name ||
-      !formData.studentNumber ||
-      !formData.institute ||
-      !formData.rfidTag
-    ) {
+    if (!formData.name || !formData.studentNumber || !formData.rfidTag) {
       setError("All fields are required!");
       setLoading(false);
       return;
     }
 
-    // Log the data to make sure it's correct
     console.log("Form Data Sent:", formData);
 
     try {
-      // Get token from localStorage
       const token = localStorage.getItem("authToken");
       if (!token) {
         setError("Token is missing in localStorage.");
@@ -59,24 +48,22 @@ const RegisterStudent = () => {
         return;
       }
 
-      // Send POST request to backend
       const response = await axios.post(
-        `http://localhost:5000/api/students/register`, // Correct endpoint
-        formData, // Form data should be passed as the second argument
+        `http://localhost:5000/api/students/register`,
+        formData,
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Pass the token in the Authorization header
+            Authorization: `Bearer ${token}`,
           },
         }
       );
 
-      // Check for success by examining the message field
       if (response.data.message === "Student registered successfully") {
         setSuccess("Student registered successfully!");
         setFormData({
           name: "",
           studentNumber: "",
-          institute: "",
+          institute: "Institute 1",
           rfidTag: "",
           idNo: decodedtoken.userId,
           status: "Active",
@@ -99,10 +86,7 @@ const RegisterStudent = () => {
     <div className="register-student-section">
       <h2>Register Student</h2>
 
-      {/* Display success message */}
       {success && <div className="success">{success}</div>}
-
-      {/* Error message */}
       {error && <div className="error">{error}</div>}
 
       <form onSubmit={handleSubmit}>
@@ -132,14 +116,22 @@ const RegisterStudent = () => {
 
         <div className="form-group">
           <label htmlFor="institute">Institute</label>
-          <input
-            type="text"
+          <select
             id="institute"
             name="institute"
             value={formData.institute}
             onChange={handleChange}
-            placeholder="Enter institute"
-          />
+          >
+            <option value="Institute 1">
+              Institute of Business and Management
+            </option>
+            <option value="Institute 2">
+              Institute of Computing Studies and Library Information Science
+            </option>
+            <option value="Institute 3">
+              Institute of Education, Arts, and Sciences
+            </option>
+          </select>
         </div>
 
         <div className="form-group">

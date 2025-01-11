@@ -15,6 +15,8 @@ const HistoryLibrarian = () => {
 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [selectedInstitute, setSelectedInstitute] = useState(""); // Added state for institute filter
+  const [institutes, setInstitutes] = useState([]); // List of unique institutes
 
   useEffect(() => {
     const fetchHistoryData = async () => {
@@ -53,6 +55,13 @@ const HistoryLibrarian = () => {
 
         setHistoryData(sortedRecords);
         setFilteredData(sortedRecords);
+
+        // Extract unique institutes
+        const uniqueInstitutes = [
+          ...new Set(sortedRecords.map((record) => record.institute)),
+        ];
+        setInstitutes(uniqueInstitutes);
+
         setLoading(false);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to fetch data.");
@@ -77,9 +86,14 @@ const HistoryLibrarian = () => {
       return;
     }
 
-    const filtered = historyData.filter(
-      (record) => record.timestamp >= start && record.timestamp <= end
-    );
+    const filtered = historyData.filter((record) => {
+      const matchesDateRange =
+        record.timestamp >= start && record.timestamp <= end;
+      const matchesInstitute =
+        selectedInstitute === "" || record.institute === selectedInstitute;
+
+      return matchesDateRange && matchesInstitute;
+    });
 
     setFilteredData(filtered);
     setError(null);
@@ -278,6 +292,20 @@ const HistoryLibrarian = () => {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
+        </label>
+        <label>
+          Institute:
+          <select
+            value={selectedInstitute}
+            onChange={(e) => setSelectedInstitute(e.target.value)}
+          >
+            <option value="">All Institutes</option>
+            {institutes.map((institute) => (
+              <option key={institute} value={institute}>
+                {institute}
+              </option>
+            ))}
+          </select>
         </label>
         <button onClick={handleFilter} disabled={loading}>
           Filter
