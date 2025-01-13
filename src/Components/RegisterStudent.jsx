@@ -122,13 +122,13 @@ const RegisterStudent = () => {
             value={formData.institute}
             onChange={handleChange}
           >
-            <option value="Institute 1">
+            <option value="Institute of Business and Management">
               Institute of Business and Management
             </option>
-            <option value="Institute 2">
+            <option value=" Institute of Computing Studies and Library Information Science">
               Institute of Computing Studies and Library Information Science
             </option>
-            <option value="Institute 3">
+            <option value="Institute of Education, Arts, and Sciences">
               Institute of Education, Arts, and Sciences
             </option>
           </select>

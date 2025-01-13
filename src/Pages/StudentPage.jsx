@@ -7,11 +7,11 @@ const StudentPage = () => {
   const [latestTimeIn, setLatestTimeIn] = useState(null);
   const [error, setError] = useState(null);
   const [currentDateTime, setCurrentDateTime] = useState("");
-  const [currentDayEntries, setCurrentDayEntries] = useState(0); // State to hold count of today's entries
+  const [currentDayEntries, setCurrentDayEntries] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchLatestTimeIn = async () => {
+    const fetchTimeIns = async () => {
       try {
         const response = await axios.get(
           "http://localhost:5000/api/students/time-ins"
@@ -19,7 +19,18 @@ const StudentPage = () => {
         const timeIns = response.data.timeIns;
 
         if (timeIns.length > 0) {
-          // Find the latest time-in entry
+          // Get the start and end of the current day
+          const today = new Date();
+          const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+          const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+
+          // Filter entries for the current day
+          const todayEntries = timeIns.filter((entry) => {
+            const entryDate = new Date(entry.date);
+            return entryDate >= startOfDay && entryDate <= endOfDay;
+          });
+
+          // Find the latest time-in entry (regardless of the day)
           const latest = timeIns.reduce((latest, current) => {
             const latestDateTime = new Date(`${latest.date}T${latest.time}`);
             const currentDateTime = new Date(`${current.date}T${current.time}`);
@@ -27,17 +38,6 @@ const StudentPage = () => {
           });
 
           setLatestTimeIn(latest);
-
-          // Get today's date
-          const today = new Date().toISOString().split("T")[0];
-
-          // Filter entries for the current day
-          const todayEntries = timeIns.filter(
-            (entry) => entry.date.split("T")[0] === today
-          );
-          console.log(latestTimeIn.date, today);
-
-          // Update the count of today's entries
           setCurrentDayEntries(todayEntries.length);
         }
       } catch (err) {
@@ -46,7 +46,7 @@ const StudentPage = () => {
       }
     };
 
-    fetchLatestTimeIn();
+    fetchTimeIns();
 
     // Update current date and time every second
     const interval = setInterval(() => {
@@ -55,7 +55,7 @@ const StudentPage = () => {
 
     // Clear interval on component unmount
     return () => clearInterval(interval);
-  }, [currentDateTime]);
+  }, []);
 
   const handleLogin = () => {
     navigate("/login");
@@ -95,7 +95,6 @@ const StudentPage = () => {
       ) : (
         <p className="no-data-message">No time-in data available.</p>
       )}
-      {/* Display the number of time-in entries for the current day */}
       <div className="time-in-summary">
         <p>Number of entries today: {currentDayEntries}</p>
       </div>

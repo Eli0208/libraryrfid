@@ -1,0 +1,29 @@
+/* Chart Container */
+.chart-container {
+    width: 100%;
+    max-width: 800px; /* Limit the width to avoid stretching on large screens */
+    margin: 0 auto; /* Center the chart horizontally */
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center the content */
+  }
+  
+  /* Title for the chart */
+  .chart-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px; /* Add some space below the title */
+    color: #333;
+  }
+  
+  /* Loading/Error States */
+  .chart-loading,
+  .chart-error {
+    font-size: 16px;
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+  }
+  

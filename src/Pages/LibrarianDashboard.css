@@ -98,8 +98,9 @@ button {
 
 /* Dashboard Content Styling */
 .dashboard-content {
-  height: 50vh; /* Half screen height */
+  height: 100vh; /* Full screen height */
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   border: 1px solid #ddd;
@@ -107,6 +108,8 @@ button {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: #fff;
   text-align: center;
+  padding: 20px;
+  overflow-y: auto;
 }
 
 .error {
@@ -123,6 +126,16 @@ button {
   background-color: #e8f5e9;
   border-radius: 6px;
   display: inline-block;
+}
+
+/* Chart Styling */
+.chart-container {
+  margin-top: 20px;
+  width: 100%; /* Ensure it doesn't exceed the parent container */
+  max-width: 600px; /* Add a max-width for better responsiveness */
+  height: 300px; /* Set a fixed height for the chart */
+  display: flex;
+  justify-content: center;
 }
 
 /* Table Section Styling */

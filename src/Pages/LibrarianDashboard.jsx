@@ -7,6 +7,7 @@ import HistoryLibrarian from "../Components/HistoryLibrarian";
 import LibrarianProfile from "../Components/LibrarianProfile";
 import { jwtDecode } from "jwt-decode";
 import TimeInsStudent from "../Components/TimeInsStudent";
+import SignInChart from "../Components/SignInChart";
 
 const LibrarianDashboard = ({ setUserRole }) => {
   const [todaySignins, setTodaySignins] = useState(0);
@@ -130,6 +131,7 @@ const LibrarianDashboard = ({ setUserRole }) => {
                     <h2>Today's Sign-ins</h2>
                     <p className="signins-count">{todaySignins}</p>
                   </div>
+                  <SignInChart />
                   <TimeInsStudent />
                 </>
               )}
